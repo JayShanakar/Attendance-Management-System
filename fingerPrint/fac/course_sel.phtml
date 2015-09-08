@@ -1,0 +1,28 @@
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'] ;
+
+    //echo "<div>Selected Course -> $b ($a) </div>";
+}
+?>
+<div id="menulist">
+   <a href="facindex.php?page=fachome"> Back to home </a>
+</div>
+<?php
+    if ($_SESSION['id'] == "toc")
+    {
+       
+?>
+
+hii
+
+<?php } ?>
+<br><br>
+<br><a href="facindex.php?page=enroll&search=&id=<?php echo $_GET["id"]; ?>"> Enroll </a>
+<br><a href="facindex.php?page=show&id=<?php echo $_GET["id"]; ?>"> Show enrolled students </a>
+<br><a href="facindex.php?page=alter&id=<?php echo $_GET["id"]; ?>"> Add and Cancel Classes </a>
+<br><a href="facindex.php?page=class_attend&id=<?php echo $_GET["id"]; ?>"> Show Class Attendace </a>

@@ -1,0 +1,19 @@
+<h1>
+<br>    
+Welcome
+<?php require 'dbconnect.php';
+$id = $_SESSION['id'];
+$query  =   "
+                SELECT name 
+                FROM registered
+                WHERE id_no = '$id'
+            ";
+$result =   mysql_query($query) or die (mysql_error());
+$row    = mysql_fetch_array($result);
+echo $row['name']. " !";
+?>
+</h1>
+<ul class="p">
+   
+</ul>
+

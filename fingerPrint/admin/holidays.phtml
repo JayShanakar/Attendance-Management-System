@@ -1,0 +1,51 @@
+
+<div class="errors">
+    <?php require 'dbconnect.php';
+
+           if(isset($_GET['success']) && $_GET['success']=="1")
+           {
+               ?><ul><li>HOLIDAY ADDED</li></ul> <?php
+           }
+           elseif(isset($_GET['success']) && $_GET['success']=="0")
+           {
+               ?><ul><li>ERROR</li></ul> <?php
+           }
+    
+        if(array_key_exists('add', $_POST))
+        {
+            $date = $_POST['date'];
+            
+            $query =  "insert  into holidays values ('$date')";
+            $result = mysql_query($query) or die(mysql_error());
+
+            if (!$result)
+            {
+                
+                unset($_POST['add']);
+                header("Location:adminindex.php?page=holidays&success=0");
+            }
+            else
+            {
+               
+                unset($_POST['add']);
+                header("Location:adminindex.php?page=holidays&success=1");
+            }
+        }
+    ?>
+</div>
+<form name="Change" action="#" method="POST" >
+    <fieldset>
+        <div class="field">
+            <label> Date </label>
+            <input type="text" name="date" value="" class="datepicker"/>
+        </div>
+        
+        <div class="field">
+            <br>
+            <label></label>            
+            <input type="submit" name="add" class="Submit" value="Add" />
+        </div>
+    </fieldset>
+</form>
+
+

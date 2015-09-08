@@ -1,0 +1,41 @@
+<div class="errors">
+    <?php require 'dbconnect.php';
+
+if(array_key_exists('save', $_POST))
+{
+    $admin_id   =$_SESSION['id']; 
+    $query      =     
+                "
+                SELECT phone_no , emain_id
+                FROM registered
+                WHERE id_no = '$admin_id' 
+                ";
+    $result     = mysql_query($query) or die(mysql_errno());
+    
+    $row        = mysql_fetch_array($result);
+    $phone      = $row['phone_no'];
+    $email      = $row['email'];
+}    
+
+        ?>
+
+</div>
+<form name="Change" action="#" method="POST" >
+    <fieldset>
+        <div class="field">
+            <label>Phone number</label>
+            <input type="text" name="phone" value="" />
+        </div>
+        
+        <div class="field">
+            <label>Email-id</label>
+            <input type="text" name="email" value="" />
+        </div>
+        <br><br>
+        <div class="field">
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="submit" name="cancel" value="Cancel" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>
+

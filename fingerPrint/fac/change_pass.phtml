@@ -1,0 +1,43 @@
+
+
+<div class="errors">
+    <?php require 'dbconnect.php';
+
+if(array_key_exists('save', $_POST))
+{
+   if($_POST['password1']==="" )
+        echo "<li>passwords do not match";
+  else if( $_POST['password1']!=$_POST['password2'])
+   {
+       echo "<li>passwords do not match";
+   }
+   else
+   {
+       $p=$_POST['password1'];
+       $f=$_SESSION['id'];
+       $query =  "update faculty set password='$p' where id='$f'";   
+       $result = mysql_query($query) or die(mysql_error());
+       echo "updated sucessfully";
+      // echo "update faculty set password='$p' where id='$f'";
+   }
+
+
+} 
+        ?>
+</div>
+<form name="Change" action="#" method="POST" >
+    <fieldset>
+        <div class="field">
+            <label>New Password</label>
+            <input type="password" name="password1" value="" />
+        </div>
+        <div class="field">
+            <label>Re-Type Password</label>
+            <input type="password" name="password2" value="" />
+        </div>
+        <div class="field">
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="submit" name="cancel" value="Cancel" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>

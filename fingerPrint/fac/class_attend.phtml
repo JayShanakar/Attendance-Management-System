@@ -1,0 +1,272 @@
+<div class="center">
+<?php
+
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'];
+    
+    echo "<div>Selected Course -> $b ($a) </div><br><br>";
+    
+        
+}
+?>
+
+
+
+
+<div class="disform">
+<form name="classattend" action="#" method="post">
+    <fieldset>
+        <div class="field">
+            <label>Display Type</label>
+            <select name="type">
+                <option>Present</option>
+                <option>Absent</option>
+                <option>Complete</option>
+            </select>
+        </div>
+        
+        <div class="field">
+            <br>
+            <label>From</label>
+            <input type="text" name="from" class="datepicker" value="" />
+        </div>
+        <br>
+        <div class="field">
+            <label>To</label>
+            <input type="text" name="till" class="datepicker" value="" />
+
+        </div>
+        <div class="field">
+           <br>
+            <input type="checkbox" name="viewst" value="sdfafs"  onclick="show1('hidden');"/>
+           View For Specific student
+        </div>
+        <div class="field" id="hidden">
+            <br><label>ID</label><input type="text" name="id" value="" />
+           
+        </div><br>								
+		<div class="field">
+		<input type="checkbox" name="check" value="box" />	
+		Present % Less Than <input type="text" name="per" value="" />
+		</div>
+		
+		
+        
+        <div class="field">
+        <br>
+            <input type="submit" value="Show" name="save" class="Submit"/>
+        </div>
+    </fieldset>
+</form>
+</div>
+<br>
+<br>
+<br>
+<br>
+
+<?php
+if (array_key_exists('save', $_POST)) 
+{
+    include 'functions.php';
+    $from = $_POST["from"];
+    $till = $_POST["till"];
+    $c_id = $_GET["id"];
+    $type = $_POST["type"];
+    $rollno = $_POST["id"];
+	$percent= $_POST["per"];
+	
+	if(isset($_POST['check']) && $_POST['check']=='box')
+		$type="Prcnt";
+	$_SESSION['percent']=$percent;
+	
+    //check for date boundaries
+    $query =    "
+                SELECT starting_date , finishing_date
+                FROM course_details
+                WHERE course_id='$c_id'
+                ";
+    $result = mysql_query($query) or die(mysql_errno());
+    $row    = mysql_fetch_array($result);
+    
+    // http://in3.php.net/manual/en/datetime.diff.php
+    
+    $dt1 = new DateTime($from);
+    $date_from = $dt1->format('Y-m-d'); //date
+    
+    $dt = new DateTime($till);
+    $date_till = $dt->format('Y-m-d'); //date
+        
+    $today = date("Y-m-d");
+	
+    if (($date_from > $row['finishing_date']) or ($date_till < $row['starting_date']) )
+    {
+        echo "This course was for duration : ".$row['starting_date']." - ".$row['finishing_date'] ;
+        echo "<br> Entered duration was out  of this scope.";
+    }
+    else if ($date_from > $date_till)
+    {
+        echo "Inconsistent entries in time window";
+    }
+    else if ($date_from > $today)
+    {
+        echo "<br> Data available from ".$row['starting_date'] ." till ".$today."<br><br>";
+    }    
+    else  
+    {
+    
+        if ($date_from < $row['starting_date'] )
+        {
+            $from = $row['starting_date'];
+            
+        }
+        if ($date_till > $row['finishing_date'] )
+        {
+            $till = $row['finishing_date'];
+        }
+        
+        
+        
+        if ($date_till > $today )
+        {
+            $till = $today."";
+            echo "<br> Data available from ".$row['starting_date'] ." ".$today."<br><br>";
+        }
+        
+    //db connect	
+    $con = db_connect();
+
+    if (mysqli_connect_errno()) 
+    {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    } else {
+        
+        if($_POST['id']!="")
+        {
+            //echo "<b><u>USER VIEW </u></b><br><br>";
+                echo "For course " . $c_id . "<br><br>";
+		//printing name
+		$query 	= "	SELECT name FROM registered WHERE id_no='$rollno' ";  
+		$result = mysqli_query($con,$query) or die("Error: ".mysqli_error($con));
+		$row = mysqli_fetch_array($result);
+		
+		echo "For user ".$row['name']." ( ".$rollno." ) "."<br><br>";
+		
+                //echo "<br>".$type."<br>";	
+		
+                //checking if that student is enrolled for that class or not
+                $query 	= "SELECT id_no , course_id FROM enrolled_details WHERE id_no='$rollno' AND course_id='$c_id'	";  
+                $result = mysqli_query($con,$query) or die("Error: ".mysqli_error($con));
+                $row = mysqli_fetch_array($result);
+                if ($row['id_no'] == "")
+                {
+                    echo "Sorry, you are not registered for this course";
+                }
+		else
+                {
+                    //total class, extra class, cancelled class
+                    class_details($con,$c_id,$from,$till);
+                
+                    //get the schedule for this course for entire week
+                    $schedule = array();
+                    $schedule = get_schedule($schedule, $c_id, $con);
+
+                    //initialize holidays in holid array
+                    $holid = array();
+                    $holid = initialize_holid($holid, $from, $till, $con);
+                    
+                    //chart_initialize
+                    //setting up the chart table
+                    //actual report
+                    $chart = array();    
+                    $chart1= array();
+                    $chart2= array();
+        
+                    //chart_initialize
+                    $chart = initialize_chart($chart, $chart1, $schedule, $from, $till, $con , $c_id);
+            
+                    //classes when user is present and it's count
+                    report($con,$rollno,$c_id,$from,$till,$type , $schedule , $holid , $chart);
+                   
+                }
+        }
+        else{
+            //echo "<b><center><u>CLASS VIEW</u></b><br><br></center>";
+            echo "For course " . $c_id . "<br><br>";
+
+            //total class, extra class, cancelled class
+            class_details($con, $c_id, $from, $till);
+
+            $query = "  SELECT reg.name , reg.id_no 
+                	FROM registered reg , enrolled_details ed  
+			WHERE ed.course_id='$c_id' AND reg.id_no=ed.id_no ";
+            $result = mysqli_query($con, $query) or die("Error: " . mysqli_error($con));
+
+            // array contains names of students registered for the course
+            $stu_reg_list = array();
+            $stu_roll_list = array();
+            while ($row = mysqli_fetch_array($result)) {
+                array_push($stu_reg_list, $row['name']);
+                array_push($stu_roll_list, $row['id_no']);
+            }
+
+            //calculating # attended classes for all students
+            
+            //get the schedule for this course for entire week
+            $schedule = array();
+            $schedule = get_schedule($schedule, $c_id, $con);
+            
+            //initialize holidays in holid array
+            $holid = array();
+            $holid = initialize_holid($holid, $from, $till, $con);
+            
+            //chart_initialize
+            //setting up the chart table
+            //actual report
+            $chart = array();    
+            $chart1= array();
+            $chart2= array();
+        
+            //chart_initialize
+            $chart = initialize_chart($chart, $chart1, $schedule, $from, $till, $con , $c_id);
+            
+            $i = 0;
+            $stu_len = count($stu_reg_list);
+			if($type=="Prcnt")
+				{
+					$_SESSION['tab1']="<table border='2' cellpadding='6' cellspacing='2'><tr><th>Id_no</th><th>Name</th><th> % observed attendance</th></tr>";
+				}	
+            while ($i < $stu_len) {
+				
+				if($type!="Prcnt")
+				{
+                //printing name 
+                echo "<b><br>For user " . $stu_reg_list[$i] . "</b>";
+                
+                //printing user's id
+                echo "	(" . $stu_roll_list[$i] . ")<br><br>";
+				}
+
+                $comp_name = $stu_reg_list[$i];
+                $rollno = $stu_roll_list[$i];
+                //classes when user is present and it's count
+                report($con,$rollno,$comp_name,$c_id,$from,$till,$type , $schedule , $holid , $chart);
+
+                $i = $i + 1;
+            }//while loop end
+			if($type=="Prcnt")
+			{
+				$_SESSION['tab1'].="</table>";
+				echo $_SESSION['tab1'];
+				echo "<br><br>";
+			}
+        }}//class view end
+    }//	date boundry condition end 
+    
+}//if array exists part end
+
+?>
+</div>

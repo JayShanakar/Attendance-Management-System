@@ -1,0 +1,124 @@
+
+
+<div class="errors">
+<?php require 'dbconnect.php';
+$count = 0;
+if(array_key_exists('save', $_POST))
+{
+  $name     = $_POST['name1'];
+  $phone    = $_POST['phone1'];
+  $email    = $_POST['email1'];
+  
+  $profile  = $_POST['profile'];
+  if ( $name != "")
+  {
+      $query_cd = 
+                "   
+                UPDATE registered   
+                SET name='$name'
+                WHERE serial_no='$profile';
+                ";
+    $result_cd = mysql_query($query_cd);
+    if (!$result_cd)
+    {
+        $count++;
+        echo "Error in updating name";
+    }
+  }
+  if ( $phone != "")
+  {
+      $query_cd = 
+                "   
+                UPDATE registered   
+                SET phone_no = '$phone'
+                WHERE serial_no='$profile';
+                ";
+    $result_cd = mysql_query($query_cd);
+    if (!$result_cd)
+    {
+        echo "Error in updating phone number";
+        $count++;
+        
+    }
+  }
+  if ( $email != "")
+  {
+      $query_cd = 
+                "   
+                UPDATE registered   
+                SET email_id = '$email'
+                WHERE serial_no='$profile';
+                ";
+    $result_cd = mysql_query($query_cd);
+    if (!$result_cd)
+    {
+        echo "Error in updating email";
+        $count++;
+        
+    }
+  }
+    
+  if ($count == 0)
+  {
+      echo "Successfully changed the profile for user ".$name."<br>";
+  }
+  
+  
+}
+?>
+
+</div>
+
+<form name="add" action="#" method="post">
+    <fieldset>
+<div class="field">
+             <label>Select profile</label> 
+              <?php 
+                        $query = "
+                                    SELECT serial_no ,name ,id_no   
+                                    FROM  registered 
+                                    
+                                    ";
+                        $result = mysql_query($query) or die(mysql_error());
+                       
+                        ?>
+             
+             <select name="profile" >
+                <?php
+                        
+                        while ($row = mysql_fetch_array($result))
+                        {
+                              echo "<option value=".$row['serial_no']."> ". $row['name'] ."--".$row['id_no']."  </option>";
+                        }
+                 ?>
+             </select>
+        </div>
+<form name="Change" action="#" method="POST" >
+    <fieldset>
+        <br>
+        <br>
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="name1" value="" />
+        </div>
+        <br>
+        <br>
+        <div class="field">
+            <label>Changed phone number</label>
+            <input type="text" name="phone1" value="" />
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="field">
+            <label>Changed email id</label>
+            <input type="text" name="email1" value="" />
+        </div>
+        <br>
+        <br>
+        <div class="field">
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="submit" name="cancel" value="Cancel" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>

@@ -1,0 +1,353 @@
+<div class="errors"><ul>
+<?php require 'dbconnect.php';
+
+$empty_string_init = "\"    \" ";
+
+$sun_count   = 0;   
+$mon_count   = 0;   
+$tue_count   = 0;
+$wed_count   = 0;
+$thu_count   = 0;
+$fri_count   = 0;
+$sat_count   = 0;
+
+if(array_key_exists('save', $_POST))
+{
+$sun1_start  = ( $_POST['sun_time1_start'] != "" ) ? $_POST['sun_time1_start'] : $empty_string_init;
+$sun1_end    = ( $_POST['sun_time1_end']   != "" ) ? $_POST['sun_time1_end']   : $empty_string_init;
+$sun2_start  = ( $_POST['sun_time2_start'] != "" ) ? $_POST['sun_time2_start'] : $empty_string_init;
+$sun2_end    = ( $_POST['sun_time2_end']   != "" ) ? $_POST['sun_time2_end']   : $empty_string_init;
+   
+$mon1_start  = ( $_POST['mon_time1_start'] != "" ) ? $_POST['mon_time1_start'] : $empty_string_init;
+$mon1_end    = ( $_POST['mon_time1_end']   != "" ) ? $_POST['mon_time1_end']   : $empty_string_init;
+$mon2_start  = ( $_POST['mon_time2_start'] != "" ) ? $_POST['mon_time2_start'] : $empty_string_init;
+$mon2_end    = ( $_POST['mon_time2_end']   != "" ) ? $_POST['mon_time2_end']   : $empty_string_init;
+
+$tue1_start  = ( $_POST['tue_time1_start'] != "" ) ? $_POST['tue_time1_start'] : $empty_string_init;
+$tue1_end  = ( $_POST['tue_time1_end']     != "" ) ? $_POST['tue_time1_end']   : $empty_string_init;
+$tue2_start  = ( $_POST['tue_time2_start'] != "" ) ? $_POST['tue_time2_start'] : $empty_string_init;
+$tue2_end  = ( $_POST['tue_time2_end']     != "" ) ? $_POST['tue_time2_end']   : $empty_string_init;
+
+$wed1_start  = ( $_POST['wed_time1_start'] != "" ) ? $_POST['wed_time1_start'] : $empty_string_init;
+$wed1_end  = ( $_POST['wed_time1_end']     != "" ) ? $_POST['wed_time1_end']   : $empty_string_init;
+$wed2_start  = ( $_POST['wed_time2_start'] != "" ) ? $_POST['wed_time2_start'] : $empty_string_init;
+$wed2_end  = ( $_POST['wed_time2_end']     != "" ) ? $_POST['wed_time2_end']   : $empty_string_init;
+
+$thu1_start  = ( $_POST['thu_time1_start'] != "" ) ? $_POST['thu_time1_start'] : $empty_string_init;
+$thu1_end  = ( $_POST['thu_time1_end']     != "" ) ? $_POST['thu_time1_end']   : $empty_string_init;
+$thu2_start  = ( $_POST['thu_time2_start'] != "" ) ? $_POST['thu_time2_start'] : $empty_string_init;
+$thu2_end  = ( $_POST['thu_time2_end']     != "" ) ? $_POST['thu_time2_end']   : $empty_string_init;
+
+$fri1_start  = ( $_POST['fri_time1_start'] != "" ) ? $_POST['fri_time1_start'] : $empty_string_init;
+$fri1_end  = ( $_POST['fri_time1_end']     != "" ) ? $_POST['fri_time1_end']   : $empty_string_init;
+$fri2_start  = ( $_POST['fri_time2_start'] != "" ) ? $_POST['fri_time2_start'] : $empty_string_init;
+$fri2_end  = ( $_POST['fri_time2_end']     != "" ) ? $_POST['fri_time2_end']   : $empty_string_init;
+
+$sat1_start  = ( $_POST['sat_time1_start'] != "" ) ? $_POST['sat_time1_start'] : $empty_string_init;
+$sat1_end    = ( $_POST['sat_time1_end']   != "" ) ? $_POST['sat_time1_end']   : $empty_string_init;
+$sat2_start  = ( $_POST['sat_time2_start'] != "" ) ? $_POST['sat_time2_start'] : $empty_string_init;
+$sat2_end    = ( $_POST['sat_time2_end']   != "" ) ? $_POST['sat_time2_end']   : $empty_string_init;
+
+$index = array(
+                $sun1_start , $sun1_end , $sun2_start , $sun2_end ,
+                $mon1_start , $mon1_end , $mon2_start , $mon2_end ,
+                $tue1_start , $tue1_end , $tue2_start , $tue2_end ,
+                $wed1_start , $wed1_end , $wed2_start , $wed2_end ,
+                $thu1_start , $thu1_end , $thu2_start , $thu2_end ,
+                $fri1_start , $fri1_end , $fri2_start , $fri2_end ,
+                $sat1_start , $sat1_end , $sat2_start , $sat2_end
+              );
+$day   = array ($sun_count , $mon_count , $tue_count , $wed_count , $thu_count , $fri_count , $sat_count);
+
+$i=0;   //  for index array = 7 * 4 = 28 
+$j=0;   //  for day array   = 7
+
+while ( $i  < 28 )
+{
+    //if scheule one has class
+    if (( $index[$i] != $empty_string_init ) and ($index[$i+1] != $empty_string_init)) 
+    {
+        $day[$j]++;
+    }
+
+    //if scheule two has class
+    if (( $index[$i+2] != $empty_string_init ) and ($index[$i+3] != $empty_string_init)) 
+    {
+        $day[$j]++;
+    }
+    
+    $i = $i + 4;
+    $j = $j + 1 ;
+}
+
+$sun_count = $day[0];
+$mon_count = $day[1];
+$tue_count = $day[2];
+$wed_count = $day[3];
+$thu_count = $day[4];
+$fri_count = $day[5];
+$sat_count = $day[6];
+
+echo "<br>";
+
+$sun = "Sunday";
+$mon = "Monday";
+$tue = "Tuesday";
+$wed = "Wednesday";
+$thu = "Thursday";
+$fri = "Friday";
+$sat = "Saturday";
+
+$c_id   = $_POST['CourseID'];
+$c_nm   = $_POST['Name'];
+$fac_id = $_POST['FacultyID'];
+$st_dt  = $_POST['StartDate'];
+$fn_dt  = $_POST['FinishDate'];
+
+//inserting information about course in course_details table
+$query = "insert into course_details values ('$c_nm','$c_id','$fac_id','$st_dt','$fn_dt')";
+$result = mysql_query($query) ;
+
+//if entry in table fails : i.e. course already exists or already registered
+if (!$result)
+{
+    echo "<li>Already registered</li>";
+}
+else
+{
+    $query =  "insert  into course_schedule values ('$c_id','$sun','$sun1_start','$sun1_end','$sun2_start','$sun2_end','$sun_count')";
+    $result = mysql_query($query) or die(mysql_error());
+    
+    $query =  "insert  into course_schedule values ('$c_id','$mon','$mon1_start','$mon1_end','$mon2_start','$mon2_end','$mon_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    $query =  "insert  into course_schedule values ('$c_id','$tue','$tue1_start','$tue1_end','$tue2_start','$tue2_end','$tue_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    $query =  "insert  into course_schedule values ('$c_id','$wed','$wed1_start','$wed1_end','$wed2_start','$wed2_end','$wed_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    $query =  "insert  into course_schedule values ('$c_id','$thu','$thu1_start','$thu1_end','$thu2_start','$thu2_end','$thu_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    $query =  "insert  into course_schedule values ('$c_id','$fri','$fri1_start','$fri1_end','$fri2_start','$fri2_end','$fri_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    $query =  "insert  into course_schedule values ('$c_id','$sat','$sat1_start','$sat1_end','$sat2_start','$sat2_end','$sat_count')";
+    $result = mysql_query($query) or die(mysql_error());
+
+    echo $c_nm . " ( ". $c_id .") has been added ";
+}  
+
+unset($_POST['save']);
+    
+} 
+
+
+?>
+</ul>
+</div>
+
+<h1>Add New Course </h1>
+
+<form name="add" action="#" method="post">
+    <fieldset>
+    <div id="left">
+   
+        
+        <div class="field">
+             <label>Course ID</label> 
+             <input type="text" name="CourseID" /> 
+        </div>
+        
+        
+        <br>
+        
+        
+        <div class="field">
+             <label>Course Name</label> 
+             <input type="text" name="Name" /> 
+        </div>
+        
+        
+        <br>
+        
+        
+        <div class="field">
+             <label>Faculty ID</label> 
+              <?php 
+                        $query = "
+                                    SELECT id ,name  
+                                    FROM  faculty f , registered r
+                                    WHERE id = id_no ;
+                                    ";
+                        $result = mysql_query($query) or die(mysql_error());
+                       
+                        ?>
+             
+             <select name="FacultyID" >
+                <?php
+                        
+                        while ($row = mysql_fetch_array($result))
+                        {
+                              echo "<option value=".$row['id']."> ". $row['name'] ."  </option>";
+                        }
+                 ?>
+             </select>
+        </div>
+        
+        
+        <br>
+        <br>
+        <br>
+        
+        <div class="field">
+             <label>Start Date</label> 
+             <input type="Text" name="StartDate" value="" class="datepicker"> 
+        </div>
+        
+        
+        <br>
+        
+        
+        <div class="field">
+             <label>Finish Date</label> 
+             <input type="Text" name="FinishDate" value="" class="datepicker"> 
+        </div>
+        
+        
+        <br>
+      </div>
+      <br> 
+     
+      
+      
+      <div >
+          <p> Schedule for the whole week </p>
+          <br>
+          
+          
+          <div class="field">
+            
+             <label>DAY </label> 
+             
+             <label> FROM </label>
+             &nbsp;&nbsp;&nbsp;<label1></label1>
+             <label>TO<label>
+          </div>
+          
+      <br>
+          
+      
+          <div class="field">
+            
+             <label>Monday </label> 
+             <input type="Text" class="time1"  name="mon_time1_start" value="" id="Mon1"> 
+             <input type="Text" class="time1"  name="mon_time1_end" value=""> 
+             <input id="Mon" type="button" value="  +1 Slot  " onclick="show(this ,'mon');" /><br>
+          </div>
+          <div id="mon" class="field">
+              <label></label>
+             <input type="Text" class="time1" name="mon_time2_start" id="mon_sec_st" value=""> 
+             <input type="Text" class="time1"  name="mon_time2_end"  id="mon_sec_fn" value=""> <br>
+            
+      </div>
+      <br>  <label></label><label1></label1>
+            <input type="button" name="copy_slots" id="copy_slots" value=" Copy for other slots " onclick="copy();"/>
+      <br><br>
+      <div class="field">
+            
+             <label>Tuesday </label> 
+             <input type="Text" name="tue_time1_start" value="" class="time1"> 
+             <input type="Text"  class="time1" name="tue_time1_end" value=""> 
+             <input id="Tue" type="button" value="  +1 Slot  " onclick="show(this , 'tue');" /> 
+             </div>
+          <div id="tue" class="field">          
+              <label></label>
+             <input type="Text" class="time1"  name="tue_time2_start" id="tue_sec_st" value=""> 
+             <input type="Text"  class="time1" name="tue_time2_end" id="tue_sec_fn" value=""> 
+            
+          </div>
+      <br>
+      <div class="field">
+            
+             <label>Wednesday </label> 
+             <input type="Text" class="time1"  name="wed_time1_start" value=""> 
+             <input type="Text"  class="time1" name="wed_time1_end" value=""> 
+             <input id="Wed" type="button" value="  +1 Slot  " onclick="show(this ,'wed');" /> 
+            </div>
+          <div id="wed" class="field"> 
+            
+            <label></label>
+              
+            <input type="Text"  class="time1" name="wed_time2_start" id="wed_sec_st" value="">
+            <input type="Text"  class="time1" name="wed_time2_end" id="wed_sec_fn" value="">
+            
+          </div>
+      <br>
+      <div class="field">
+            <label>Thursday </label>
+            <input type="Text"  class="time1" name="thu_time1_start" value="">
+            <input type="Text"  class="time1" name="thu_time1_end" value="">
+             <input id="Thu" type="button" value="  +1 Slot  " onclick="show(this , 'thu');" />
+             </div>
+          <div id="thu" class="field"> 
+             <label></label>
+            <input type="Text" class="time1"  name="thu_time2_start" id="thu_sec_st" value="">
+            <input type="Text"  class="time1" name="thu_time2_end" id="thu_sec_fn" value="">
+          </div>
+      <br>
+      <div class="field">
+            <label>Friday </label>
+            <input type="Text"  class="time1" name="fri_time1_start" value="">
+            <input type="Text" class="time1"  name="fri_time1_end" value="">
+            <input id="Fri" type="button" value="  +1 Slot  " onclick="show(this , 'fri');" />
+            </div>
+          <div id="fri" class="field"> 
+            <label></label>
+              <input type="Text"  class="time1" name="fri_time2_start" id="fri_sec_st" value="">
+            <input type="Text"  class="time1" name="fri_time2_end" id="fri_sec_fn" value=""><br>
+          </div>
+      
+      </table>    
+      </div>
+      <br>
+      <div class="field">
+            
+             <label>Saturday </label> 
+             <input type="Text"  class="time1" name="sat_time1_start" value=""> 
+             <input type="Text"  class="time1" name="sat_time1_end" value=""> 
+             <input id="clickMe"  class="time1" type="button" value="  +1 Slot  " onclick="show(this ,'sat');" /><br>
+          </div>
+          <div id="sat" class="field">
+              <label></label>
+             <input type="Text"  class="time1" name="sat_time2_start" id="sat_sec_st" value=""> 
+             <input type="Text"  class="time1" name="sat_time2_end"  id="sat_sec_fn" value=""> <br>
+            
+      </div>
+      <br>  
+      <div class="field">
+            
+             <label>Sunday </label> 
+             <input type="Text" class="time1"  name="sun_time1_start" value=""> 
+             <input type="Text"  class="time1" name="sun_time1_end" value=""> 
+             <input id="clickMe" type="button" value="  +1 Slot  " onclick="show(this ,'sun');" /><br>
+          </div>
+          <div id="sun" class="field">
+              <label></label>
+             <input type="Text"  class="time1" name="sun_time2_start" id="sun_sec_st" value=""> 
+             <input type="Text"  class="time1" name="sun_time2_end"  id="sun_sec_fn" value=""> <br>
+            
+      </div>
+        <br><br>
+      <div class="wrapper">
+            <label></label>
+            
+            <label><input type="submit" name="save" class="Submit" /></label>
+            <label><input type="submit" name="cancel" value="Cancel" class="submit" /></label>
+            
+      </div>
+    </fieldset>
+    <br><br><br><br>
+</form>
+    <br><br><br><br>

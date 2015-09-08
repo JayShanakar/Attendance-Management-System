@@ -1,0 +1,70 @@
+<?php
+if (isset($_GET['st_toenroll'])) {
+    /* $conn=mysql_connect("localhost","root","");
+      mysql_selectdb("mod_fpa"); */
+   
+    $st_id = $_GET['st_toenroll'];
+    $class_id = $_GET['id'];
+    require_once('dbconnect.php');
+
+    $result = mysql_query("insert ignore into enrolled_details select id_no,'$class_id' from registered where id_no like '$st_id'") or die(mysql_error());
+    echo $st_id . "is now enrolled in course" . "$class_id";
+
+    // mysql_close($conn);
+}
+
+
+if (isset($_POST['search']) ) {
+    $_GET['search'] = $_POST['search'];
+} else {
+ 
+}
+?>
+
+
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'] ;
+
+    echo "<div>Selected Course -> $b ($a) </div><br>";
+}
+?>
+
+<form name="search_form" method="POST" action="#">
+    <input type="text" name="search" value="" />
+    <input type="submit" value="Search"  />
+</form>
+
+
+
+<?php
+
+/* $conn=mysql_connect("localhost","root","");
+  mysql_selectdb("mod_fpa"); */
+require_once('dbconnect.php');
+$a = $_GET['search'];
+if ($a == '') {
+    $a = '%';
+}
+//echo $a;
+ $b = $_GET['id'];
+echo "<a align=right href=facindex.php?page=enroll&search=".$a."&id=".$b."&st_toenroll=" . $a . ">   Enroll All</a>\n";
+
+
+$result = mysql_query("select * from registered where id_no like '$a'") or die(mysql_error());
+while ($row = mysql_fetch_array($result)) {
+   
+    $c = $row['id_no'];
+
+    $result1 = mysql_query("select * from enrolled_details where id_no='$c' and course_id='$b'") or die(mysql_error());
+    if ($row1 = mysql_fetch_array($result1)) {
+       
+    } else {
+        echo "<div class='enroll'>" . $row['id_no'] . "   " . $row['name'] . "<a href=facindex.php?page=enroll&search=".$a."&id=".$b."&st_toenroll=" . $row['id_no'] . ">   Enroll </a></div><br>\n";
+    }
+}
+?>

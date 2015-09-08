@@ -1,0 +1,173 @@
+<?php
+if (array_key_exists('Add', $_POST)) {
+    $co = $_GET['id'];
+    $sts = $_POST['start_ts'];
+    $ens = $_POST['end_ts'];
+    $dates = $_POST['date'];
+//$day  = $_POST['day'];
+    $timestamp = strtotime($dates);
+
+    $day = date('l', $timestamp);
+//var_dump($day);
+    require 'dbconnect.php';
+    echo "INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','E',1)";
+    mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','E',1)")
+            or die(mysql_error());
+
+    echo "<p>Added information about extra class</p>";
+    unset($_POST['Add']);
+}
+
+
+if (array_key_exists('Cancel', $_POST)) {
+    $co = $_GET['id'];
+    $sts = $_POST['start_ts'];
+    $ens = $_POST['end_ts'];
+    $dates = $_POST['date'];
+//$day  = $_POST['day'];
+    $timestamp = strtotime($dates);
+
+    $day = date('l', $timestamp);
+//var_dump($day);
+    require 'dbconnect.php';
+    
+    mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','C',1)")
+            or die(mysql_error());
+
+    echo "<p>Added information about extra class</p>";
+    unset($_POST['Cancel']);
+}
+?>
+
+<div class="col-21">
+Extra class :
+<form action=# method="post">
+    <fieldset>
+
+        <div class="field">
+            <label>Date :
+            </label> <input type="text" name="date" class="datepicker"><br><br>
+        </div>
+        <div class="field">
+            <label>Starting
+            </label>   <input type="text" class="time1"  name="start_ts" ><br><br>
+        </div>
+        <div class="field">
+            <label>Finishing
+            </label>  <input type="text" class="time1" name="end_ts" >
+        </div>
+        <div class="field">
+            <input type="submit" value="ADD" name="Add">
+            <input type="submit" value="CANCEL" name="Cancel">
+        </div>
+
+    </fieldset>
+</form>
+</div>
+<div class="col-22">
+    
+    <label> Course Schedule </label>  
+<?php 
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+?>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Day</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Monday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Monday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Tuesday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Tuesday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Wednesday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Wednesday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Thursday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Thursday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Friday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Friday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Saturday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Saturday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Sunday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Sunday</td>
+            <td><?php echo $row['time1_start']; ?></td>
+            <td><?php echo $row['time1_end']; ?></td>
+            <td><?php echo $row['time2_start']; ?></td>
+            <td><?php echo $row['time2_end'];} ?></td>
+        </tr>
+        
+    </tbody>
+</table>
+
+</div>
